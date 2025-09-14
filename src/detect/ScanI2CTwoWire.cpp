@@ -387,16 +387,12 @@ void ScanI2CTwoWire::scanPort(I2CPort port, uint8_t *address, uint8_t asize)
                 break;
 
                 SCAN_SIMPLE_CASE(SHTC3_ADDR, SHTC3, "SHTC3", (uint8_t)addr.address)
-            case RCWL9620_ADDR:
-                // get MAX30102 PARTID
+            case MAX30102_ADDR:
+                // Check MAX30102 PARTID register 0xFF
                 registerValue = getRegisterValue(ScanI2CTwoWire::RegisterLocation(addr, 0xFF), 1);
                 if (registerValue == 0x15) {
                     type = MAX30102;
                     logFoundDevice("MAX30102", (uint8_t)addr.address);
-                    break;
-                } else {
-                    type = RCWL9620;
-                    logFoundDevice("RCWL9620", (uint8_t)addr.address);
                 }
                 break;
 
@@ -460,6 +456,7 @@ void ScanI2CTwoWire::scanPort(I2CPort port, uint8_t *address, uint8_t asize)
 
                 SCAN_SIMPLE_CASE(LSM6DS3_ADDR, LSM6DS3, "LSM6DS3", (uint8_t)addr.address);
                 SCAN_SIMPLE_CASE(TCA9555_ADDR, TCA9555, "TCA9555", (uint8_t)addr.address);
+                SCAN_SIMPLE_CASE(RCWL9620_ADDR, RCWL9620, "TF-02pro (as RCWL9620)", (uint8_t)addr.address);
                 SCAN_SIMPLE_CASE(VEML7700_ADDR, VEML7700, "VEML7700", (uint8_t)addr.address);
             case TSL25911_ADDR:
                 registerValue = getRegisterValue(ScanI2CTwoWire::RegisterLocation(addr, 0x12), 1);
@@ -592,6 +589,7 @@ size_t ScanI2CTwoWire::countDevices() const
 {
     return foundDevices.size();
 }
+
 
 void ScanI2CTwoWire::logFoundDevice(const char *device, uint8_t address)
 {

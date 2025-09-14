@@ -343,7 +343,7 @@ int32_t EnvironmentTelemetryModule::runOnce()
             airTime->isTxAllowedAirUtil()) {
             sendTelemetry();
             lastSentToMesh = millis();
-        } else if (((lastSentToPhone == 0) || !Throttle::isWithinTimespanMs(lastSentToPhone, sendToPhoneIntervalMs)) &&
+        } else if (((lastSentToPhone == 0) || !Throttle::isWithinTimespanMs(lastSentToPhone, getSendToPhoneIntervalMs())) &&
                    (service->isToPhoneQueueEmpty())) {
             // Just send to phone when it's not our time to send to mesh yet
             // Only send while queue is empty (phone assumed connected)
@@ -351,7 +351,22 @@ int32_t EnvironmentTelemetryModule::runOnce()
             lastSentToPhone = millis();
         }
     }
-    return min(sendToPhoneIntervalMs, result);
+    return min(getSendToPhoneIntervalMs(), result);
+}
+
+uint32_t EnvironmentTelemetryModule::getSendToPhoneIntervalMs()
+{
+    uint32_t intervalSec = moduleConfig.telemetry.environment_update_interval;
+
+    // Safety checks: minimum 15 seconds, maximum to prevent overflow
+    if (intervalSec == 0 || intervalSec < 15) {
+        intervalSec = 15; // Minimum 15 seconds to prevent phone spam
+    }
+    if (intervalSec > 4294967) { // Prevent overflow when multiplying by 1000
+        intervalSec = 4294967;
+    }
+
+    return intervalSec * 1000;
 }
 
 bool EnvironmentTelemetryModule::wantUIFrame()
@@ -537,6 +552,9 @@ bool EnvironmentTelemetryModule::handleReceivedProtobuf(const meshtastic_MeshPac
             packetPool.release(lastMeasurementPacket);
 
         lastMeasurementPacket = packetPool.allocCopy(mp);
+
+        // Store remote environmental telemetry in NodeDB for app access
+        nodeDB->updateTelemetry(getFrom(&mp), *t, RX_SRC_RADIO);
     }
 
     return false; // Let others look at this message also if they want

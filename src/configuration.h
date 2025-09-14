@@ -180,8 +180,8 @@ along with this program.  If not, see <http://www.gnu.org/licenses/>.
 #define PMSA0031_ADDR 0x12
 #define QMA6100P_ADDR 0x12
 #define AHT10_ADDR 0x38
-#define RCWL9620_ADDR 0x57
-#define VEML7700_ADDR 0x10
+#define RCWL9620_ADDR 0x10
+#define VEML7700_ADDR 0x14
 #define TSL25911_ADDR 0x29
 #define OPT3001_ADDR 0x45
 #define OPT3001_ADDR_ALT 0x44

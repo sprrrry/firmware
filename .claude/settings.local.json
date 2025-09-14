@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:meshtastic.org)",
+      "Bash(mkdir:*)",
+      "Read(//c/Users/yasha/OneDrive/Documents/Arduino/IITR/Lidar_I2C_Send/**)",
+      "WebSearch",
+      "Bash(\"/c/Users/yasha/AppData/Local/Programs/Python/Python313/Scripts/meshtastic.exe\" --port COM29 --info)",
+      "Bash(\"/c/Users/yasha/AppData/Local/Programs/Python/Python313/Scripts/meshtastic.exe\" --port COM11 --ch-set psk 0x1a2b3c4d5e6f708192a3b4c5d6e7f801234567890abcdef0fedcba0987654321 --ch-index 0)",
+      "Bash(\"/c/Users/yasha/AppData/Local/Programs/Python/Python313/Scripts/meshtastic.exe\" --port COM11 --set telemetry.environment_update_interval 120)",
+      "Bash(\"/c/Users/yasha/AppData/Local/Programs/Python/Python313/Scripts/meshtastic.exe\" --port COM11 --ch-index 1 --ch-del)",
+      "Bash(\"/c/Users/yasha/AppData/Local/Programs/Python/Python313/Scripts/meshtastic.exe\" --port COM29 --ch-index 1 --ch-del)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

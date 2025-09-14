@@ -1595,13 +1595,12 @@ void NodeDB::updatePosition(uint32_t nodeId, const meshtastic_Position &p, RxSou
 }
 
 /** Update telemetry info for this node based on received metrics
- *  We only care about device telemetry here
+ *  Handles both device and environment telemetry
  */
 void NodeDB::updateTelemetry(uint32_t nodeId, const meshtastic_Telemetry &t, RxSource src)
 {
     meshtastic_NodeInfoLite *info = getOrCreateMeshNode(nodeId);
-    // Environment metrics should never go to NodeDb but we'll safegaurd anyway
-    if (!info || t.which_variant != meshtastic_Telemetry_device_metrics_tag) {
+    if (!info) {
         return;
     }
 
@@ -1611,8 +1610,18 @@ void NodeDB::updateTelemetry(uint32_t nodeId, const meshtastic_Telemetry &t, RxS
     } else {
         LOG_DEBUG("updateTelemetry REMOTE node=0x%x ", nodeId);
     }
-    info->device_metrics = t.variant.device_metrics;
-    info->has_device_metrics = true;
+
+    // Handle device metrics
+    if (t.which_variant == meshtastic_Telemetry_device_metrics_tag) {
+        info->device_metrics = t.variant.device_metrics;
+        info->has_device_metrics = true;
+    }
+    // Handle environment metrics
+    else if (t.which_variant == meshtastic_Telemetry_environment_metrics_tag) {
+        info->environment_metrics = t.variant.environment_metrics;
+        info->has_environment_metrics = true;
+    }
+
     updateGUIforNode = info;
     notifyObservers(true); // Force an update whether or not our node counts have changed
 }
