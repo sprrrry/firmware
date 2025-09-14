@@ -552,9 +552,6 @@ bool EnvironmentTelemetryModule::handleReceivedProtobuf(const meshtastic_MeshPac
             packetPool.release(lastMeasurementPacket);
 
         lastMeasurementPacket = packetPool.allocCopy(mp);
-
-        // Store remote environmental telemetry in NodeDB for app access
-        nodeDB->updateTelemetry(getFrom(&mp), *t, RX_SRC_RADIO);
     }
 
     return false; // Let others look at this message also if they want
