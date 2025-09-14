@@ -10,6 +10,15 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Visual Studio Code (recommended)
 
 ### Initial Setup
+
+**For pbxlora_v2 Custom Hardware:**
+1. **Clone this repository**: `git clone --recursive https://github.com/sprrrry/firmware.git`
+2. **Enter directory**: `cd firmware`
+3. **Switch to custom branch**: `git checkout pbxlora-v2-custom`
+4. **Build for pbxlora_v2**: `pio run -e pbxlora-v2`
+5. **Open in VS Code**: Open the firmware folder in Visual Studio Code
+
+**For standard Meshtastic development:**
 1. **Clone repository**: `git clone https://github.com/meshtastic/firmware.git`
 2. **Update submodules**: `cd firmware && git submodule update --init`
 3. **Open in VS Code**: Open the firmware folder in Visual Studio Code
@@ -130,3 +139,43 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 - Submodule updates are required after cloning (`git submodule update --init`)
 - Web client at meshtastic.local only updates with full device wipe/reinstall
 - Export configuration before full reinstalls to preserve settings
+
+## pbxlora_v2 Custom Hardware
+
+This firmware includes custom support for pbxlora_v2 hardware with the following features:
+
+### Hardware Specifications
+- **MCU**: ESP32-WROOM-32E
+- **LoRa Radio**: SX1262
+- **Display**: 128x64 OLED (I2C)
+- **Sensor**: TF-02pro lidar (40m range)
+- **I2C Pins**: SDA=17, SCL=16
+- **Power**: Battery voltage monitoring on GPIO39
+
+### Custom Features
+- **TF-02pro Integration**: Uses RCWL9620Sensor interface for compatibility
+- **Environmental Telemetry Fix**: Remote nodes environmental data properly stored in NodeDB
+- **Dynamic Update Intervals**: iOS app update rate matches environmental telemetry interval
+- **Custom Channel Support**: Bypass 30-minute minimum interval restriction
+- **OLED Display**: Automatic detection and configuration
+
+### Clone Instructions for Others
+```bash
+# Clone with all submodules
+git clone --recursive https://github.com/sprrrry/firmware.git
+cd firmware
+
+# Switch to pbxlora_v2 branch
+git checkout pbxlora-v2-custom
+
+### Submodule Notes
+This fork uses a custom protobufs submodule (`sprrrry/protobufs`) that includes:
+- `EnvironmentMetrics` field added to `NodeInfoLite` structure
+- Enables proper environmental telemetry storage for remote nodes
+- Compatible with standard Meshtastic apps and web interface
+
+### Configuration Commands
+```bash
+# Set 60-second environmental telemetry
+meshtastic --port COM29 --set telemetry.environment_update_interval 60
+```
