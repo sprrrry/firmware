@@ -153,11 +153,11 @@ This firmware includes custom support for pbxlora_v2 hardware with the following
 - **Power**: Battery voltage monitoring on GPIO39
 
 ### Custom Features
-- **TF-02pro Integration**: Uses RCWL9620Sensor interface for compatibility
-- **Environmental Telemetry Fix**: Remote nodes environmental data properly stored in NodeDB
-- **Dynamic Update Intervals**: iOS app update rate matches environmental telemetry interval
-- **Custom Channel Support**: Bypass 30-minute minimum interval restriction
-- **OLED Display**: Automatic detection and configuration
+- **TF-02pro Integration**: Uses RCWL9620Sensor interface for compatibility with existing telemetry system
+- **Dynamic Update Intervals**: iOS app update rate matches environmental telemetry interval (15+ seconds)
+- **I2C Optimization**: Address conflict resolution between TF-02pro and VEML7700 sensors
+- **OLED Display**: Automatic detection and configuration (SSD1306/SH1106)
+- **Standard Telemetry**: Full compatibility with all Meshtastic clients using standard TELEMETRY packets
 
 ### Clone Instructions for Others
 ```bash
@@ -169,13 +169,18 @@ cd firmware
 git checkout pbxlora-v2-custom
 
 ### Submodule Notes
-This fork uses a custom protobufs submodule (`sprrrry/protobufs`) that includes:
-- `EnvironmentMetrics` field added to `NodeInfoLite` structure
-- Enables proper environmental telemetry storage for remote nodes
-- Compatible with standard Meshtastic apps and web interface
+This firmware uses standard upstream protobufs with latest Czech translation support:
+- Uses official Meshtastic protobuf definitions (no custom modifications)
+- Environmental telemetry handled via standard TELEMETRY packet system
+- Full compatibility with all Meshtastic apps and web interface
+- Updated to include Czech language support in device UI
 
 ### Configuration Commands
 ```bash
-# Set 60-second environmental telemetry
-meshtastic --port COM29 --set telemetry.environment_update_interval 60
+# Set 30-second environmental telemetry (minimum 15 seconds supported)
+meshtastic --port COM29 --set telemetry.environment_update_interval 30
+
+# Enable environmental telemetry measurement and display
+meshtastic --port COM29 --set telemetry.environment_measurement_enabled true
+meshtastic --port COM29 --set telemetry.environment_screen_enabled true
 ```
